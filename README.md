@@ -4,13 +4,27 @@
 
 **1. Find all documents by field in array field with projection**
 
-`Bson queryFilter = new Document("countries", new Document("$all", Arrays.asList(country)));
+        Bson queryFilter = new Document("countries", new Document("$all", Arrays.asList(country))) // country - array;
+        Bson projection = new Document("title", 1);
+        List<Document> movies = new ArrayList<>();
+        moviesCollection
+            .find(queryFilter)
+            .projection(projection)
+            .into(movies);
 
-Bson projection = new Document("title", 1);
+        return movies;
 
-List<Document> movies = new ArrayList<>();
+**2. Find all documents by field in array field with sort**
 
-moviesCollection
-    .find(queryFilter)
-    .projection(projection)
-    .into(movies);`
+        sortKey = "tomatoes.viewer.numReviews";Bson sort = Sorts.descending(sortKey);
+        Bson castFilter = new Document("cast", new Document("$all", Arrays.asList(cast))) // cast - array;
+
+        List<Document> movies = new ArrayList<>();
+        moviesCollection
+                .find(castFilter)
+                .sort(sort)
+                .limit(limit)
+                .skip(skip)
+                .iterator()
+                .forEachRemaining(movies::add);
+        return movies;
