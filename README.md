@@ -28,3 +28,25 @@
                 .iterator()
                 .forEachRemaining(movies::add);
         return movies;
+
+**3. Faceted Search**
+
+        //String... cast
+        List<Document> movies = new ArrayList<>();
+        
+        Bson skipStage = Aggregates.skip(skip);
+        Bson matchStage = Aggregates.match(Filters.in("cast", cast));
+        String sortKey = "tomatoes.viewer.numReviews";
+        Bson sortStage = Aggregates.sort(Sorts.descending(sortKey));
+        Bson limitStage = Aggregates.limit(limit);
+        Bson facetStage = buildFacetStage();
+
+        List<Bson> pipeline = new LinkedList<>();
+        pipeline.add(matchStage);
+        pipeline.add(sortStage);
+        pipeline.add(skipStage);
+        pipeline.add(limitStage);
+        pipeline.add(facetStage);
+
+        moviesCollection.aggregate(pipeline).iterator().forEachRemaining(movies::add);
+        return movies;
